@@ -15,6 +15,9 @@ namespace BenScr.Random
         public static double NextDouble(double min, double max) => random.NextDouble(min, max);
         public static string NextString(int length = 10, string charset = null) => random.NextString(length, charset);
 
+        public static T Next<T>(T min, T max) where T : IComparable<T> => random.Next(min, max);
+        public static T Next<T>() where T : IComparable<T> => random.Next<T>();
+
         public static class Secure
         {
             public static bool NextBool() => randomSecure.NextBool();
@@ -23,6 +26,8 @@ namespace BenScr.Random
             public static double NextDouble(double min, double max) => randomSecure.NextDouble(min, max);
             public static string NextString() => randomSecure.NextString();
             public static void GenerateBytes(byte[] bytes) => randomSecure.GenerateBytes(bytes);
+            public static T Next<T>(T min, T max) where T : IComparable<T> => randomSecure.Next(min, max);
+            public static T Next<T>() where T : IComparable<T> => randomSecure.Next<T>();
         }
     }
 }
