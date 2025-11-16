@@ -28,7 +28,7 @@ bool randomBool = random.NextBool();
 string randomString = random.NextString();
 ```
 
-Static RNG
+Static Helper Class
 ```csharp
 using BenScr.Security.Cryptography;
 
