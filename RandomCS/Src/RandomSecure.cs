@@ -12,6 +12,16 @@ namespace BenScr.Security.Cryptography
         {
             return (byte)(NextInt() & 0xFF);
         }
+        public byte NextByte(byte max)
+        {
+            if (max <= 0) throw new ArgumentOutOfRangeException(nameof(max));
+            return (byte)(NextByte() % max);
+        }
+        public byte NextByte(byte min, byte max)
+        {
+            if (min >= max) throw new ArgumentOutOfRangeException($"Next({min},{max}) is wrong, min can't be more or equal to max.");
+            return (byte)(min + (NextByte() % (max - min)));
+        }
 
         public int NextInt()
         {
@@ -75,6 +85,35 @@ namespace BenScr.Security.Cryptography
                 code += charset[NextInt(charsetLength)];
 
             return code;
+        }
+
+        public T Next<T>(T min, T max) where T : IComparable<T>
+        {
+            if (typeof(T) == typeof(int))
+            {
+                int result = NextInt(Convert.ToInt32(min), Convert.ToInt32(max));
+                return (T)(object)result;
+            }
+
+            if (typeof(T) == typeof(float))
+            {
+                float result = NextFloat(Convert.ToSingle(min), Convert.ToSingle(max));
+                return (T)(object)result;
+            }
+
+            if (typeof(T) == typeof(double))
+            {
+                double result = NextDouble(Convert.ToDouble(min), Convert.ToDouble(max));
+                return (T)(object)result;
+            }
+
+            if (typeof(T) == typeof(byte))
+            {
+                double result = NextByte(Convert.ToByte(min), Convert.ToByte(max));
+                return (T)(object)result;
+            }
+
+            throw new NotSupportedException($"Type '{typeof(T)}' is not supported.");
         }
 
         public void GenerateBytes(byte[] bytes) => randomNumberGenerator.GetBytes(bytes);
