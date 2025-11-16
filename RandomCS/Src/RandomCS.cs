@@ -39,6 +39,28 @@ namespace BenScr.Random
 
         public ulong GetSeed() => state;
 
+        public T Next<T>(T min, T max) where T : IComparable<T>
+        {
+            if (typeof(T) == typeof(int))
+            {
+                int result = NextInt(Convert.ToInt32(min), Convert.ToInt32(max));
+                return (T)(object)result;
+            }
+
+            if (typeof(T) == typeof(float))
+            {
+                float result = NextFloat(Convert.ToSingle(min), Convert.ToSingle(max));
+                return (T)(object)result;
+            }
+
+            if (typeof(T) == typeof(double))
+            {
+                double result = NextDouble(Convert.ToDouble(min), Convert.ToDouble(max));
+                return (T)(object)result;
+            }
+
+            throw new NotSupportedException($"Type '{typeof(T)}' is not supported.");
+        }
 
         public byte NextByte()
         {
