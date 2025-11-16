@@ -87,6 +87,47 @@ namespace BenScr.Security.Cryptography
             return code;
         }
 
+        public T Next<T>() where T : IComparable<T>
+        {
+            if (typeof(T) == typeof(int))
+            {
+                int result = NextInt();
+                return (T)(object)result;
+            }
+
+            if (typeof(T) == typeof(float))
+            {
+                float result = NextFloat();
+                return (T)(object)result;
+            }
+
+            if (typeof(T) == typeof(double))
+            {
+                double result = NextDouble();
+                return (T)(object)result;
+            }
+
+            if (typeof(T) == typeof(byte))
+            {
+                byte result = NextByte();
+                return (T)(object)result;
+            }
+
+            if (typeof(T) == typeof(bool))
+            {
+                bool result = NextBool();
+                return (T)(object)result;
+            }
+
+            if (typeof(T) == typeof(string))
+            {
+                string result = NextString();
+                return (T)(object)result;
+            }
+
+            throw new NotSupportedException($"Type '{typeof(T)}' is not supported.");
+        }
+
         public T Next<T>(T min, T max) where T : IComparable<T>
         {
             if (typeof(T) == typeof(int))
@@ -109,7 +150,7 @@ namespace BenScr.Security.Cryptography
 
             if (typeof(T) == typeof(byte))
             {
-                double result = NextByte(Convert.ToByte(min), Convert.ToByte(max));
+                byte result = NextByte(Convert.ToByte(min), Convert.ToByte(max));
                 return (T)(object)result;
             }
 
