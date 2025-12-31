@@ -8,7 +8,7 @@
 		<Nullable>enable</Nullable>
 		<Authors>Ben Schneider</Authors>
 		<Company>Ben Schneider</Company>
-		<Description>A library providing fast, secure, and flexible random number generation utilities</Description>
+		<Description>A library providing fast, secure, and flexible random number generation utilities.</Description>
 		
 		<PackageProjectUrl>https://github.com/Ben-Scr/RandomCS</PackageProjectUrl>
 		<RepositoryUrl>https://ko-fi.com/benscr</RepositoryUrl>
