@@ -1,8 +1,8 @@
 ﻿
 namespace BenScr.Text
 {
-    internal class Characters
+    internal static class Characters
     {
-        public const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw0123456789";
+        public const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     }
 }

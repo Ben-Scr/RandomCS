@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
 using static BenScr.Text.Characters;
 
 namespace BenScr.Security.Cryptography
@@ -19,7 +20,7 @@ namespace BenScr.Security.Cryptography
         }
         public byte NextByte(byte min, byte max)
         {
-            if (min >= max) throw new ArgumentOutOfRangeException($"Next({min},{max}) is wrong, min can't be more or equal to max.");
+            if (min >= max) throw new ArgumentOutOfRangeException(nameof(min), $"min ({min}) must be less than max ({max}).");
             return (byte)(min + (NextByte() % (max - min)));
         }
 
@@ -32,7 +33,9 @@ namespace BenScr.Security.Cryptography
         }
         public int NextInt(int min, int max)
         {
-            return min + (NextInt() % (max - min));
+            if (min >= max) throw new ArgumentOutOfRangeException(nameof(min), $"min ({min}) must be less than max ({max}).");
+            // Use long arithmetic for the span so the full int range is supported.
+            return (int)(min + (NextInt() % ((long)max - min)));
         }
         public int NextInt(int max)
         {
@@ -44,13 +47,14 @@ namespace BenScr.Security.Cryptography
         {
             byte[] eightBytes = new byte[8];
             randomNumberGenerator.GetBytes(eightBytes);
-            double value = BitConverter.ToUInt64(eightBytes, 0) / (ulong.MaxValue + 1.0);
-            return value;
+            ulong value = BitConverter.ToUInt64(eightBytes, 0);
+            // Use the top 53 bits (the mantissa width of a double) for a uniform [0, 1).
+            return (value >> 11) * (1.0 / (1UL << 53));
         }
         public double NextDouble(double max)
         {
             if (max <= 0) throw new ArgumentOutOfRangeException(nameof(max));
-            return NextDouble() % max;
+            return NextDouble() * max;
         }
         public double NextDouble(double min, double max)
         {
@@ -61,30 +65,31 @@ namespace BenScr.Security.Cryptography
         {
             byte[] fourBytes = new byte[4];
             randomNumberGenerator.GetBytes(fourBytes);
-            float value = BitConverter.ToUInt32(fourBytes, 0) / (uint.MaxValue + 1.0f);
-            return value;
+            uint value = BitConverter.ToUInt32(fourBytes, 0);
+            // Use the top 24 bits (the mantissa width of a float) for a uniform [0, 1).
+            return (value >> 8) * (1.0f / (1 << 24));
         }
         public float NextFloat(float max)
         {
             if (max <= 0) throw new ArgumentOutOfRangeException(nameof(max));
-            return NextFloat() % max;
+            return NextFloat() * max;
         }
         public float NextFloat(float min, float max)
         {
             return min + (NextFloat() * (max - min));
         }
 
-        public string NextString(int length = 10, string charset = null)
+        public string NextString(int length = 10, string? charset = null)
         {
             charset ??= CHARS;
             int charsetLength = charset.Length;
 
-            string code = string.Empty;
+            StringBuilder code = new StringBuilder(length < 0 ? 0 : length);
 
             for (int i = 0; i < length; i++)
-                code += charset[NextInt(charsetLength)];
+                code.Append(charset[NextInt(charsetLength)]);
 
-            return code;
+            return code.ToString();
         }
 
         public T Next<T>() where T : IComparable<T>

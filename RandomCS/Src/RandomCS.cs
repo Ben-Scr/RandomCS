@@ -1,10 +1,16 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using static BenScr.Text.Characters;
 
 namespace BenScr.Random
 {
     public sealed class RandomCS
     {
+        // The xorshift* algorithm collapses to an all-zero sequence if the state ever
+        // becomes zero, so a zero seed is remapped onto this fixed non-zero constant
+        // (the 64-bit golden-ratio constant) to keep the generator well behaved.
+        private const ulong DefaultSeed = 0x9E3779B97F4A7C15UL;
+
         private ulong state;
 
         public RandomCS(ulong seed)
@@ -27,14 +33,14 @@ namespace BenScr.Random
 
         public void SetSeed(ulong seed)
         {
-            state = seed;
+            state = seed != 0 ? seed : DefaultSeed;
         }
         public void RemoveSeed()
         {
             ulong t = (ulong)DateTime.Now.Ticks;
             ulong g = (ulong)Guid.NewGuid().GetHashCode();
             ulong s = (ulong)Stopwatch.GetTimestamp();
-            state = t ^ g ^ s;
+            SetSeed(t ^ g ^ s);
         }
 
         public ulong GetSeed() => state;
@@ -53,7 +59,7 @@ namespace BenScr.Random
         }
         public byte NextByte(byte min, byte max)
         {
-            if (min >= max) throw new ArgumentOutOfRangeException($"Next({min},{max}) is wrong, min can't be more or equal to max.");
+            if (min >= max) throw new ArgumentOutOfRangeException(nameof(min), $"min ({min}) must be less than max ({max}).");
             return (byte)(min + (NextByte() % (max - min)));
         }
 
@@ -68,18 +74,21 @@ namespace BenScr.Random
         }
         public int NextInt(int min, int max)
         {
-            if (min >= max) throw new ArgumentOutOfRangeException($"Next({min},{max}) is wrong, min can't be more or equal to max.");
-            return min + (NextInt() % (max - min));
+            if (min >= max) throw new ArgumentOutOfRangeException(nameof(min), $"min ({min}) must be less than max ({max}).");
+            // Use long arithmetic for the span so the full int range is supported.
+            return (int)(min + (NextInt() % ((long)max - min)));
         }
 
         public double NextDouble()
         {
-            return (double)NextState() / ulong.MaxValue;
+            // Use the top 53 bits (the mantissa width of a double) to produce a uniform
+            // value in the half-open interval [0, 1); this never returns exactly 1.0.
+            return (NextState() >> 11) * (1.0 / (1UL << 53));
         }
         public double NextDouble(double max)
         {
             if (max <= 0) throw new ArgumentOutOfRangeException(nameof(max));
-            return NextDouble() % max;
+            return NextDouble() * max;
         }
         public double NextDouble(double min, double max)
         {
@@ -88,29 +97,31 @@ namespace BenScr.Random
 
         public float NextFloat()
         {
-            return (float)NextDouble();
+            // Use the top 24 bits (the mantissa width of a float) to produce a uniform
+            // value in the half-open interval [0, 1); this never returns exactly 1.0f.
+            return (NextState() >> 40) * (1.0f / (1 << 24));
         }
         public float NextFloat(float max)
         {
             if (max <= 0) throw new ArgumentOutOfRangeException(nameof(max));
-            return NextFloat() % max;
+            return NextFloat() * max;
         }
         public float NextFloat(float min, float max)
         {
             return min + (NextFloat() * (max - min));
         }
 
-        public string NextString(int length = 10, string charset = null)
+        public string NextString(int length = 10, string? charset = null)
         {
             charset ??= CHARS;
             int charsetLength = charset.Length;
 
-            string code = string.Empty;
+            StringBuilder code = new StringBuilder(length < 0 ? 0 : length);
 
             for (int i = 0; i < length; i++)
-                code += charset[NextInt(charsetLength)];
+                code.Append(charset[NextInt(charsetLength)]);
 
-            return code;
+            return code.ToString();
         }
 
         public T Next<T>() where T : IComparable<T>

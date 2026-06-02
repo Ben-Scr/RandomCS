@@ -11,8 +11,8 @@ Non-Secure RNG
 using BenScr.Random;
 
 RandomCS random = new RandomCS();
-int randomInt = RandomHandler.NextInt(0, 10);
-float randomFloat = RandomHandler.NextFloat(0.0f, 10.0f);
+int randomInt = random.NextInt(0, 10);
+float randomFloat = random.NextFloat(0.0f, 10.0f);
 bool randomBool = random.NextBool();
 string randomString = random.NextString();
 ```
@@ -30,15 +30,15 @@ string randomString = random.NextString();
 
 Static Helper Class
 ```csharp
-using BenScr.Security.Cryptography;
+using BenScr.Random;
 
 // Non-Secure
 int randomInt = RandomHandler.NextInt(0, 10);
-inr randomFloat = RandomHandler.NextFloat(0.0f, 10.0f);
+float randomFloat = RandomHandler.NextFloat(0.0f, 10.0f);
 
 // Secure
-int randomInt = RandomHandler.Secure.NextInt(0, 10);
-int randomFloat = RandomHandler.Secure.NextFloat(0.0f, 10.0f);
+int secureInt = RandomHandler.Secure.NextInt(0, 10);
+float secureFloat = RandomHandler.Secure.NextFloat(0.0f, 10.0f);
 ```
 
 Generic Functions
