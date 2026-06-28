@@ -6,7 +6,7 @@
 
 ## How to use
 
-Non-Secure RNG
+### Non-Secure RNG
 ```csharp
 using BenScr.Random;
 
@@ -17,7 +17,7 @@ bool randomBool = random.NextBool();
 string randomString = random.NextString();
 ```
 
-Secure RNG
+### Secure RNG
 ```csharp
 using BenScr.Security.Cryptography;
 
@@ -28,7 +28,7 @@ bool randomBool = random.NextBool();
 string randomString = random.NextString();
 ```
 
-Static Helper Class
+### Static Helper Class
 ```csharp
 using BenScr.Random;
 
@@ -41,7 +41,7 @@ int secureInt = RandomHandler.Secure.NextInt(0, 10);
 float secureFloat = RandomHandler.Secure.NextFloat(0.0f, 10.0f);
 ```
 
-Generic Functions
+### Generic Methods
 ```csharp
 // Works with RandomCS, RandomSecure and RandomHandler
 int randomInt = random.Next<int>(0, 10);
