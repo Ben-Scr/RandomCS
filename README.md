@@ -1,8 +1,5 @@
 # RandomCS
-
-## Usage
-- Fast random value generation
-- Cryptographically secure random number generation
+A library providing fast, secure, and flexible random number generation utilities
 
 ## How to use
 
