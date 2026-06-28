@@ -17,7 +17,7 @@ bool randomBool = random.NextBool();
 string randomString = random.NextString();
 ```
 
-Safe RNG
+Secure RNG
 ```csharp
 using BenScr.Security.Cryptography;
 
